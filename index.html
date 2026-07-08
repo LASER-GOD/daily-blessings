@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <title>Daily Blessings</title>
+
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Blessings" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#17110a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      font-family: Georgia, "Segoe UI", serif;
+      background: radial-gradient(circle at 50% 25%, #3a2a12 0%, #17110a 75%);
+      color: #fff6e0;
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wrap {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8vw;
+      text-align: center;
+      gap: 5vh;
+    }
+    .icon {
+      font-size: 14vw;
+      filter: drop-shadow(0 0 20px rgba(255, 210, 120, 0.6));
+      animation: glow 3s ease-in-out infinite;
+    }
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 210, 120, 0.45)); }
+      50% { filter: drop-shadow(0 0 28px rgba(255, 210, 120, 0.85)); }
+    }
+    #blessing {
+      font-size: 6.5vw;
+      line-height: 1.5;
+      font-weight: 500;
+      color: #fff6e0;
+      text-shadow: 0 0 24px rgba(255, 210, 120, 0.35);
+      max-width: 90vw;
+      opacity: 0;
+      transform: translateY(10px) scale(0.97);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    #blessing.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    #hint {
+      font-size: 4vw;
+      color: #c9a86a;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .ripple {
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255, 210, 120, 0.25);
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0);
+      animation: ripple-anim 0.6s ease-out forwards;
+    }
+    @keyframes ripple-anim {
+      to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+    }
+    #aboutBtn {
+      position: fixed;
+      top: max(env(safe-area-inset-top), 10px);
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 210, 120, 0.12);
+      border: 1px solid rgba(255, 210, 120, 0.4);
+      color: #e8c98a;
+      font-size: 16px;
+      font-family: Georgia, serif;
+      line-height: 1;
+      z-index: 5;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 7, 3, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      padding: 8vw;
+      text-align: center;
+    }
+    .overlay.show { display: flex; }
+    .about-card h2 {
+      font-size: 6vw;
+      margin-bottom: 3vh;
+      color: #ffd27a;
+    }
+    .about-card p {
+      font-size: 4.2vw;
+      line-height: 1.6;
+      margin-bottom: 1vh;
+    }
+    .about-card .site {
+      color: #c9a86a;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="icon">&#10024;</div>
+    <div id="blessing"></div>
+    <div id="hint">Tap anywhere for a blessing</div>
+  </div>
+
+  <button id="aboutBtn" aria-label="About">&#8505;</button>
+  <div class="overlay" id="aboutOverlay">
+    <div class="about-card">
+      <h2>Daily Blessings</h2>
+      <p>Programmed by <strong>LASER GOD</strong></p>
+      <p class="site">WWW.CALASERS.COM</p>
+      <p style="margin-top: 3vh; opacity: 0.7; font-size: 3.6vw;">Tap anywhere to close</p>
+    </div>
+  </div>
+
+  <script>
+    var blessings = [
+      "May today bring you peace of mind and a grateful heart.",
+      "May your path be lit by kindness and good fortune.",
+      "May you find strength in this moment and hope in the next.",
+      "May love surround you and worry pass you by.",
+      "May your work be blessed and your rest be sweet.",
+      "May you be a light to someone who needs it today.",
+      "May patience guide your words and grace guide your steps.",
+      "May you be surrounded by people who lift you up.",
+      "May today's small victories bring you quiet joy.",
+      "May you walk gently through this day, and it be gentle with you.",
+      "May you find beauty in the ordinary moments today.",
+      "May your heart be light and your burdens be few.",
+      "May healing find you wherever you carry pain.",
+      "May you trust the timing of your life.",
+      "May courage rise in you exactly when you need it.",
+      "May gratitude open doors that worry has closed.",
+      "May you give yourself the same kindness you give others.",
+      "May today hold one moment that makes you smile without reason.",
+      "May you be at peace with what you cannot control.",
+      "May abundance find its way into your life, in ways big and small.",
+      "May your dreams feel a little closer today.",
+      "May you rest in the knowledge that you are enough.",
+      "May the people you love feel your love today.",
+      "May you be protected, guided, and gently held.",
+      "May today's challenges become tomorrow's strength.",
+      "May stillness find you when the world feels loud.",
+      "May forgiveness soften what anger has hardened.",
+      "May your effort today plant seeds you'll be proud of.",
+      "May wisdom meet you at every crossroad.",
+      "May joy return to you as freely as you give it away."
+    ];
+
+    var blessingEl = document.getElementById('blessing');
+    var hintEl = document.getElementById('hint');
+    var lastIndex = -1;
+
+    function nextBlessing() {
+      var i;
+      do { i = Math.floor(Math.random() * blessings.length); }
+      while (i === lastIndex && blessings.length > 1);
+      lastIndex = i;
+      return blessings[i];
+    }
+
+    function showBlessing(x, y) {
+      hintEl.style.opacity = '0';
+      blessingEl.classList.remove('show');
+      setTimeout(function () {
+        blessingEl.textContent = nextBlessing();
+        blessingEl.classList.add('show');
+      }, 180);
+
+      var r = document.createElement('div');
+      r.className = 'ripple';
+      var size = Math.max(window.innerWidth, window.innerHeight) * 1.4;
+      r.style.width = size + 'px';
+      r.style.height = size + 'px';
+      r.style.left = x + 'px';
+      r.style.top = y + 'px';
+      document.body.appendChild(r);
+      r.addEventListener('animationend', function () { r.remove(); });
+
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(15);
+      }
+    }
+
+    document.addEventListener('touchstart', function (e) {
+      if (e.target.closest('#aboutBtn, #aboutOverlay')) return;
+      var t = e.touches[0];
+      showBlessing(t.clientX, t.clientY);
+    }, { passive: true });
+
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('#aboutBtn, #aboutOverlay')) return;
+      showBlessing(e.clientX, e.clientY);
+    });
+
+    var aboutBtn = document.getElementById('aboutBtn');
+    var aboutOverlay = document.getElementById('aboutOverlay');
+
+    aboutBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      aboutOverlay.classList.add('show');
+    });
+
+    aboutOverlay.addEventListener('click', function (e) {
+      e.stopPropagation();
+      aboutOverlay.classList.remove('show');
+    });
+  </script>
+</body>
+</html>
