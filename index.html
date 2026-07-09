@@ -78,21 +78,6 @@
     @keyframes ripple-anim {
       to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
     }
-    #aboutBtn {
-      position: fixed;
-      top: max(env(safe-area-inset-top), 10px);
-      right: 14px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(255, 210, 120, 0.12);
-      border: 1px solid rgba(255, 210, 120, 0.4);
-      color: #e8c98a;
-      font-size: 16px;
-      font-family: Georgia, serif;
-      line-height: 1;
-      z-index: 5;
-    }
     .overlay {
       position: fixed;
       inset: 0;
@@ -123,7 +108,7 @@
       position: fixed;
       top: max(env(safe-area-inset-top), 10px);
       left: 10px;
-      right: 52px;
+      right: 10px;
       z-index: 5;
       display: flex;
       flex-wrap: nowrap;
@@ -155,6 +140,12 @@
       color: #fff6e0;
       box-shadow: 0 0 12px rgba(255, 210, 120, 0.5);
     }
+    .cat-btn.version-chip {
+      background: transparent;
+      border-color: rgba(255, 210, 120, 0.18);
+      color: #8a7658;
+      font-size: 10px;
+    }
     #categoryLabel {
       font-size: 3.2vw;
       color: #c9a86a;
@@ -162,27 +153,32 @@
       text-transform: uppercase;
       opacity: 0.9;
     }
-    #copyBtn {
+    #actionBar {
       position: fixed;
       bottom: max(env(safe-area-inset-bottom), 18px);
       left: 50%;
       transform: translateX(-50%);
       z-index: 5;
-      padding: 10px 26px;
+      display: flex;
+      gap: 10px;
+    }
+    .action-btn {
+      padding: 10px 22px;
       border-radius: 999px;
       background: rgba(255, 210, 120, 0.12);
       border: 1px solid rgba(255, 210, 120, 0.4);
       color: #ffd27a;
       font-family: Georgia, serif;
-      font-size: 3.6vw;
+      font-size: 3.4vw;
       letter-spacing: 1px;
       text-transform: uppercase;
+      white-space: nowrap;
     }
     #copyToast {
       position: fixed;
-      bottom: max(env(safe-area-inset-bottom), 18px);
+      bottom: calc(max(env(safe-area-inset-bottom), 18px) + 46px);
       left: 50%;
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(10px);
       z-index: 6;
       padding: 8px 18px;
       border-radius: 999px;
@@ -190,13 +186,14 @@
       color: #17110a;
       font-size: 3.4vw;
       font-weight: 600;
+      white-space: nowrap;
       opacity: 0;
       transition: opacity 0.3s ease, transform 0.3s ease;
       pointer-events: none;
     }
     #copyToast.show {
       opacity: 1;
-      transform: translateX(-50%) translateY(-52px);
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </head>
@@ -210,21 +207,24 @@
     <div id="hint">Tap anywhere for a blessing</div>
   </div>
 
-  <button id="copyBtn">Copy</button>
+  <div id="actionBar">
+    <button id="copyBtn" class="action-btn">Copy</button>
+    <button id="messageBtn" class="action-btn">Text It</button>
+  </div>
   <div id="copyToast">Copied!</div>
 
-  <button id="aboutBtn" aria-label="About">&#8505;</button>
   <div class="overlay" id="aboutOverlay">
     <div class="about-card">
       <h2>Daily Blessings</h2>
       <p>Programmed by <strong>LASER GOD</strong></p>
-      <p class="site">WWW.CALASERS.COM</p>
+      <p class="site">WWW.BARUKH.COM</p>
       <p style="margin-top: 3vh; opacity: 0.7; font-size: 3.6vw;">Tap anywhere to close</p>
     </div>
   </div>
 
   <script src="blessings-data.js"></script>
   <script>
+    var APP_VERSION = 'v1.2';
     var DATA = window.BLESSINGS_DATA;
     var CATEGORIES = window.BLESSINGS_CATEGORIES;
     var CONTENT_IDS = CATEGORIES.filter(function (c) { return c.id !== 'random'; }).map(function (c) { return c.id; });
@@ -233,9 +233,12 @@
     var hintEl = document.getElementById('hint');
     var categoryLabelEl = document.getElementById('categoryLabel');
     var categoryBarEl = document.getElementById('categoryBar');
-    var currentCategory = 'kids';
+    var aboutOverlay = document.getElementById('aboutOverlay');
+    var currentCategory = CATEGORIES[0].id;
     var currentText = '';
     var lastIndex = -1;
+    var lastTapTime = 0;
+    var TAP_COOLDOWN_MS = 1000;
 
     function pickCategoryId() {
       if (currentCategory === 'random') {
@@ -278,25 +281,27 @@
       }
     }
 
-    var INTERACTIVE_SELECTOR = '#aboutBtn, #aboutOverlay, #categoryBar, #copyBtn';
+    // Touch devices fire both 'touchstart' and a synthetic 'click' for the same
+    // tap, which used to double-advance the blessing. A shared cooldown timestamp
+    // collapses both events from one physical tap into a single blessing change.
+    function handleScreenTap(x, y) {
+      var now = Date.now();
+      if (now - lastTapTime < TAP_COOLDOWN_MS) return;
+      lastTapTime = now;
+      showBlessing(x, y);
+    }
+
+    var INTERACTIVE_SELECTOR = '#aboutOverlay, #categoryBar, #actionBar';
 
     document.addEventListener('touchstart', function (e) {
       if (e.target.closest(INTERACTIVE_SELECTOR)) return;
       var t = e.touches[0];
-      showBlessing(t.clientX, t.clientY);
+      handleScreenTap(t.clientX, t.clientY);
     }, { passive: true });
 
     document.addEventListener('click', function (e) {
       if (e.target.closest(INTERACTIVE_SELECTOR)) return;
-      showBlessing(e.clientX, e.clientY);
-    });
-
-    var aboutBtn = document.getElementById('aboutBtn');
-    var aboutOverlay = document.getElementById('aboutOverlay');
-
-    aboutBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      aboutOverlay.classList.add('show');
+      handleScreenTap(e.clientX, e.clientY);
     });
 
     aboutOverlay.addEventListener('click', function (e) {
@@ -306,6 +311,7 @@
 
     function renderCategoryBar() {
       categoryBarEl.innerHTML = '';
+
       CATEGORIES.forEach(function (cat) {
         var btn = document.createElement('button');
         btn.className = 'cat-btn' + (cat.id === currentCategory ? ' active' : '');
@@ -321,12 +327,27 @@
         });
         categoryBarEl.appendChild(btn);
       });
+
+      var aboutChip = document.createElement('button');
+      aboutChip.className = 'cat-btn';
+      aboutChip.innerHTML = '<span class="em">&#8505;</span><span>About</span>';
+      aboutChip.addEventListener('click', function (e) {
+        e.stopPropagation();
+        aboutOverlay.classList.add('show');
+      });
+      categoryBarEl.appendChild(aboutChip);
+
+      var versionChip = document.createElement('div');
+      versionChip.className = 'cat-btn version-chip';
+      versionChip.textContent = APP_VERSION;
+      categoryBarEl.appendChild(versionChip);
     }
 
     renderCategoryBar();
     categoryLabelEl.textContent = CATEGORIES[0].label;
 
     var copyBtn = document.getElementById('copyBtn');
+    var messageBtn = document.getElementById('messageBtn');
     var copyToast = document.getElementById('copyToast');
     var copyToastTimer = null;
 
@@ -342,24 +363,46 @@
       document.body.removeChild(ta);
     }
 
+    function copyText(text) {
+      return new Promise(function (resolve) {
+        if (window.navigator && window.navigator.clipboard && window.navigator.clipboard.writeText) {
+          window.navigator.clipboard.writeText(text).then(resolve, function () {
+            fallbackCopy(text);
+            resolve();
+          });
+        } else {
+          fallbackCopy(text);
+          resolve();
+        }
+      });
+    }
+
+    function showToast(message) {
+      copyToast.textContent = message;
+      copyToast.classList.add('show');
+      if (copyToastTimer) clearTimeout(copyToastTimer);
+      copyToastTimer = setTimeout(function () { copyToast.classList.remove('show'); }, 1600);
+    }
+
     copyBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       if (!currentText) return;
+      copyText(currentText).then(function () { showToast('Copied!'); });
+    });
+
+    messageBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!currentText) return;
       var text = currentText;
-      var done = function () {
-        copyToast.classList.add('show');
-        if (copyToastTimer) clearTimeout(copyToastTimer);
-        copyToastTimer = setTimeout(function () { copyToast.classList.remove('show'); }, 1400);
-      };
-      if (window.navigator && window.navigator.clipboard && window.navigator.clipboard.writeText) {
-        window.navigator.clipboard.writeText(text).then(done, function () {
-          fallbackCopy(text);
-          done();
-        });
-      } else {
-        fallbackCopy(text);
-        done();
-      }
+      copyText(text).then(function () {
+        showToast('Copied — opening Messages…');
+        setTimeout(function () {
+          var isiOS = /iP(hone|od|ad)/.test(window.navigator.platform) ||
+            (window.navigator.userAgent.indexOf('Mac') !== -1 && window.navigator.maxTouchPoints > 1);
+          var url = (isiOS ? 'sms:&body=' : 'sms:?body=') + encodeURIComponent(text);
+          window.location.href = url;
+        }, 500);
+      });
     });
   </script>
 </body>

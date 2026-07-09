@@ -400,11 +400,11 @@
   };
 
   var CATEGORIES = [
-    { id: "kids", label: "Kids", icon: "🧒" },
     { id: "family", label: "Family", icon: "🏡" },
+    { id: "healing", label: "Healing", icon: "🌿" },
+    { id: "kids", label: "Kids", icon: "🧒" },
     { id: "friends", label: "Friends", icon: "🤝" },
     { id: "grieving", label: "Grieving", icon: "🕊️" },
-    { id: "healing", label: "Healing", icon: "🌿" },
     { id: "jewish", label: "Jewish", icon: "✡️" },
     { id: "catholic", label: "Catholic", icon: "✝️" },
     { id: "random", label: "Random", icon: "🎲" }
