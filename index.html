@@ -336,9 +336,10 @@
 
   <script src="blessings-data.js"></script>
   <script>
-    var APP_VERSION = 'v1.4';
-    var BUILD_DATE = 'July 8, 2026 · 8:37 PM PT';
+    var APP_VERSION = 'v1.5';
+    var BUILD_DATE = 'July 8, 2026 · 8:41 PM PT';
     var VERSION_HISTORY = [
+      { v: 'v1.5', notes: 'The app now checks for updates whenever you open it or bring it back to the foreground, and reloads automatically to fetch the latest version.' },
       { v: 'v1.4', notes: 'Added the "My Daily Blessings" title, a version history viewer, a special family & friends message in About, and a new Motivational category.' },
       { v: 'v1.3', notes: 'Faster, more responsive buttons; moved the blessing text higher on screen; cleaned up the About button; made Copy and Text It bigger and equal size.' },
       { v: 'v1.2', notes: 'Fixed a double-tap bug; reordered categories (Family, Healing first); added a Text It button; moved About into the scrolling list; updated the site link.' },
@@ -416,10 +417,22 @@
     // Buttons wait on the browser's synthetic 'click' event by default, which can
     // lag behind the physical tap. bindTap responds instantly on touchstart and
     // suppresses the click that follows the same tap, so buttons feel immediate.
+    //
+    // That follow-up click doesn't always land back on the same element, though:
+    // opening an overlay (About/Version) makes it cover the screen immediately,
+    // so the synthetic click from the tap that opened it can land ON the overlay
+    // and trigger its close handler right away — the overlay flashes open then
+    // shuts, i.e. it doesn't "latch" open. ghostClickGuardUntil is a shared
+    // deadline any click handler can check to ignore that trailing ghost click,
+    // regardless of which element it ends up targeting.
+    var ghostClickGuardUntil = 0;
+    function isGhostClick() { return Date.now() < ghostClickGuardUntil; }
+
     function bindTap(el, handler) {
       var touched = false;
       el.addEventListener('touchstart', function (e) {
         touched = true;
+        ghostClickGuardUntil = Date.now() + 600;
         handler(e);
         setTimeout(function () { touched = false; }, 500);
       }, { passive: true });
@@ -444,6 +457,7 @@
 
     aboutOverlay.addEventListener('click', function (e) {
       e.stopPropagation();
+      if (isGhostClick()) return;
       aboutOverlay.classList.remove('show');
     });
 
@@ -455,6 +469,7 @@
 
     versionOverlay.addEventListener('click', function (e) {
       e.stopPropagation();
+      if (isGhostClick()) return;
       versionOverlay.classList.remove('show');
     });
 
@@ -557,6 +572,34 @@
         }, 500);
       });
     });
+
+    // Checks the live deployment's version.json against the version baked into
+    // this page. If they differ, a newer build has been published, so reload to
+    // fetch it. Runs on open, whenever the app is brought back to the foreground,
+    // and periodically while it stays open.
+    var VERSION_CHECK_URL = 'https://laser-god.github.io/daily-blessings/version.json';
+    var updateCheckInFlight = false;
+
+    function checkForUpdate() {
+      if (updateCheckInFlight) return;
+      updateCheckInFlight = true;
+      fetch(VERSION_CHECK_URL + '?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (data && data.version && data.version !== APP_VERSION) {
+            window.location.reload();
+          }
+        })
+        .catch(function () { /* offline or unreachable: ignore, try again later */ })
+        .then(function () { updateCheckInFlight = false; });
+    }
+
+    setTimeout(checkForUpdate, 1500);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') checkForUpdate();
+    });
+    window.addEventListener('focus', checkForUpdate);
+    setInterval(checkForUpdate, 5 * 60 * 1000);
   </script>
 </body>
 </html>
