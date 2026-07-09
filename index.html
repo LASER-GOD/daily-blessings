@@ -336,9 +336,10 @@
 
   <script src="blessings-data.js"></script>
   <script>
-    var APP_VERSION = 'v1.7';
-    var BUILD_DATE = 'July 8, 2026 · 9:07 PM PT';
+    var APP_VERSION = 'v1.8';
+    var BUILD_DATE = 'July 8, 2026 · 9:14 PM PT';
     var VERSION_HISTORY = [
+      { v: 'v1.8', notes: 'Blessing selection now uses the current clock seconds to pick a rotating starting point on the list before randomizing, so picks don’t cluster near the start of the list.' },
       { v: 'v1.7', notes: 'Removed the Hindi category.' },
       { v: 'v1.6', notes: 'Added a new "Hindi" category with 200+ classic Hindi proverbs and sayings (secular folk wisdom, not religious) alongside newly written blessings in that same voice.' },
       { v: 'v1.5', notes: 'The app now checks for updates whenever you open it or bring it back to the foreground, and reloads automatically to fetch the latest version.' },
@@ -375,9 +376,15 @@
     function nextBlessing() {
       var catId = pickCategoryId();
       var list = DATA[catId];
+      // Use the current seconds as the starting point on the list, then land on
+      // a random offset from there, so picks don't cluster near the top of the
+      // array — the "start" rotates with the clock instead of always being 0.
+      var startPoint = new Date().getSeconds() % list.length;
       var i;
-      do { i = Math.floor(Math.random() * list.length); }
-      while (i === lastIndex && list.length > 1);
+      do {
+        var offset = Math.floor(Math.random() * list.length);
+        i = (startPoint + offset) % list.length;
+      } while (i === lastIndex && list.length > 1);
       lastIndex = i;
       return list[i];
     }
