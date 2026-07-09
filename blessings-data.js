@@ -436,77 +436,6 @@
     "keep pushing you toward the life you're building."
   ];
 
-  var HINDI_ANCHORS = [
-    "Jaisi karni waisi bharni — as you sow, so shall you reap. (Hindi proverb)",
-    "Boond boond se sagar banta hai — drop by drop, an ocean is formed. (Hindi proverb)",
-    "Samay se bada koi nahi — nothing is greater than time. (Hindi proverb)",
-    "Mehnat ka phal meetha hota hai — the fruit of hard work is sweet. (Hindi proverb)",
-    "Jahan chah wahan raah — where there is a will, there is a way. (Hindi proverb)",
-    "Sabar ka phal meetha hota hai — the fruit of patience is sweet. (Hindi proverb)",
-    "Aaj ka kaam kal par mat chhodo — never put off today's work for tomorrow. (Hindi proverb)",
-    "Kaam kaam ko sikhata hai — work itself teaches work. (Hindi proverb)",
-    "Yatha drishti tatha srishti — as is your vision, so is your world. (traditional Hindi saying)",
-    "Nanhe beej se bada vriksha banta hai — even a small seed becomes a great tree. (Hindi proverb)",
-    "Ghar wahi jahan pyaar ho — home is wherever there is love. (Hindi saying)",
-    "Maa se badhkar koi nahi — no one is greater than one's mother. (traditional Hindi saying)",
-    "Buri nazar wale, tera muh kaala — a traditional saying said in good humor to ward off bad luck. (Hindi folk saying)",
-    "Ek akela thak jaata hai, milkar bojh uthate hain — alone one tires, together the burden is light. (Hindi proverb)",
-    "Andhon mein kaana raja — among the blind, the one-eyed man is king. (Hindi proverb)",
-    "Door ke dhol suhavne lagte hain — distant drums always sound sweeter. (Hindi proverb)",
-    "Ghar ki murgi daal barabar — familiarity breeds contempt. (Hindi idiom)",
-    "Nanga kya nahayega kya nichodega — one with nothing has nothing to lose. (Hindi idiom)",
-    "Jitni chadar ho utne pair failao — stretch your legs only as far as your blanket. (Hindi proverb, on living within your means)",
-    "Kuan pyase ke paas nahi jaata — the well does not go to the thirsty; you must make the effort. (Hindi proverb)",
-    "Ubla doodh bhi khatta ho sakta hai — even boiled milk can turn sour; nothing is guaranteed. (Hindi saying)",
-    "Vaani mein meethaas ho to sab kuch meetha lagta hai — sweetness in your words makes everything sweeter. (Hindi saying)",
-    "Khud par bharosa sabse bada bharosa hai — trust in yourself is the greatest trust. (Hindi saying)",
-    "Bina mehnat ke kuch nahi milta — nothing comes without hard work. (Hindi saying)",
-    "Ek se bhale do — two are better than one. (Hindi proverb)",
-    "Jo garajte hain woh baraste nahi — those who only thunder rarely bring the rain; actions speak louder than words. (Hindi proverb)",
-    "Neend na jaage jaagne wale ko koi jaga nahi sakta — no one can wake someone who is only pretending to sleep. (Hindi proverb)"
-  ];
-  var HINDI_SUBJECTS = [
-    "you and your household", "your family this Diwali", "your loved ones",
-    "you and yours", "your household", "the people you hold dear"
-  ];
-  var HINDI_WISHES = [
-    "be blessed with shanti — a calm and peaceful mind.",
-    "walk the path of honesty and integrity all their days.",
-    "find prosperity as bright as a Diwali lamp.",
-    "see their good deeds return to them many times over.",
-    "know contentment in simple joys.",
-    "be guided by truth in every decision.",
-    "find strength in seva — selfless service to others.",
-    "be blessed with good health and long life.",
-    "meet every hardship without causing harm to others.",
-    "find wisdom as deep as the great rivers.",
-    "be showered with abundance and good fortune.",
-    "know a peace that settles deep within the heart.",
-    "carry the light of knowledge into every dark corner.",
-    "be blessed with a home full of laughter and warmth.",
-    "find balance between duty and joy.",
-    "be guided by the wisdom of their elders.",
-    "know gratitude for every gift, great and small.",
-    "walk humbly, as the wisest among us always do.",
-    "find harmony between mind, body, and heart.",
-    "be blessed with prosperity in this new season.",
-    "carry forward the traditions that bind the family together.",
-    "find joy as bright as a thousand diyas.",
-    "be blessed with patience in every trial.",
-    "know that every sunrise brings new possibility.",
-    "walk each day a little freer from every burden.",
-    "be surrounded by the love of generations past and present.",
-    "find strength in unity, as a family and as one.",
-    "be blessed with wisdom that outlasts wealth.",
-    "carry kindness like a flame that never dims.",
-    "know that good deeds always find their way home.",
-    "be blessed with a heart as generous as the monsoon rain.",
-    "find peace beneath every changing sky.",
-    "walk each day a little closer to their best self.",
-    "be blessed with harmony in home and heart.",
-    "carry gratitude in every step of their journey."
-  ];
-
   var DATA = {
     kids: combine(KIDS_SUBJECTS, KIDS_WISHES),
     family: combine(FAMILY_SUBJECTS, FAMILY_WISHES),
@@ -515,7 +444,6 @@
     healing: combine(HEALING_SUBJECTS, HEALING_WISHES),
     jewish: JEWISH_ANCHORS.concat(combine(JEWISH_SUBJECTS, JEWISH_WISHES)),
     catholic: CATHOLIC_ANCHORS.concat(combine(CATHOLIC_SUBJECTS, CATHOLIC_WISHES)),
-    hindi: HINDI_ANCHORS.concat(combine(HINDI_SUBJECTS, HINDI_WISHES)),
     motivational: combine(MOTIVATIONAL_SUBJECTS, MOTIVATIONAL_WISHES)
   };
 
@@ -527,7 +455,6 @@
     { id: "grieving", label: "Grieving", icon: "🕊️" },
     { id: "jewish", label: "Jewish", icon: "✡️" },
     { id: "catholic", label: "Catholic", icon: "✝️" },
-    { id: "hindi", label: "Hindi", icon: "🪔" },
     { id: "motivational", label: "Motivational", icon: "🔥" },
     { id: "random", label: "Random", icon: "🎲" }
   ];
