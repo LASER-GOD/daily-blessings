@@ -67,6 +67,11 @@
       letter-spacing: 1px;
       text-transform: uppercase;
       opacity: 0.85;
+      transition: opacity 0.6s ease, font-size 0.6s ease;
+    }
+    #hint.subtle {
+      font-size: 2.8vw;
+      opacity: 0.35;
     }
     .ripple {
       position: fixed;
@@ -336,9 +341,10 @@
 
   <script src="blessings-data.js"></script>
   <script>
-    var APP_VERSION = 'v1.8';
-    var BUILD_DATE = 'July 8, 2026 · 9:14 PM PT';
+    var APP_VERSION = 'v1.9';
+    var BUILD_DATE = 'July 8, 2026 · 10:16 PM PT';
     var VERSION_HISTORY = [
+      { v: 'v1.9', notes: 'The "tap anywhere" hint no longer disappears after the first tap — it now stays on screen as a small, faded "tap for more" reminder so it\'s always clear there\'s more to see.' },
       { v: 'v1.8', notes: 'Blessing selection now uses the current clock seconds to pick a rotating starting point on the list before randomizing, so picks don’t cluster near the start of the list.' },
       { v: 'v1.7', notes: 'Removed the Hindi category.' },
       { v: 'v1.6', notes: 'Added a new "Hindi" category with 200+ classic Hindi proverbs and sayings (secular folk wisdom, not religious) alongside newly written blessings in that same voice.' },
@@ -390,12 +396,15 @@
     }
 
     function showBlessing(x, y) {
-      hintEl.style.opacity = '0';
       blessingEl.classList.remove('show');
       setTimeout(function () {
         currentText = nextBlessing();
         blessingEl.textContent = currentText;
         blessingEl.classList.add('show');
+        // Once a blessing has been shown, keep a faded, smaller reminder
+        // visible (rather than hiding it) so it's clear there's always more.
+        hintEl.textContent = 'tap for more';
+        hintEl.classList.add('subtle');
       }, 180);
 
       var r = document.createElement('div');
