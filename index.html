@@ -119,14 +119,99 @@
       color: #c9a86a;
       letter-spacing: 1px;
     }
+    #categoryBar {
+      position: fixed;
+      top: max(env(safe-area-inset-top), 10px);
+      left: 10px;
+      right: 52px;
+      z-index: 5;
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 6px;
+      padding: 2px 2px 6px;
+      -webkit-overflow-scrolling: touch;
+    }
+    #categoryBar::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 210, 120, 0.08);
+      border: 1px solid rgba(255, 210, 120, 0.28);
+      color: #e8c98a;
+      font-family: Georgia, serif;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .cat-btn .em { font-size: 13px; }
+    .cat-btn.active {
+      background: rgba(255, 210, 120, 0.28);
+      border-color: #ffd27a;
+      color: #fff6e0;
+      box-shadow: 0 0 12px rgba(255, 210, 120, 0.5);
+    }
+    #categoryLabel {
+      font-size: 3.2vw;
+      color: #c9a86a;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    #copyBtn {
+      position: fixed;
+      bottom: max(env(safe-area-inset-bottom), 18px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      padding: 10px 26px;
+      border-radius: 999px;
+      background: rgba(255, 210, 120, 0.12);
+      border: 1px solid rgba(255, 210, 120, 0.4);
+      color: #ffd27a;
+      font-family: Georgia, serif;
+      font-size: 3.6vw;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    #copyToast {
+      position: fixed;
+      bottom: max(env(safe-area-inset-bottom), 18px);
+      left: 50%;
+      transform: translateX(-50%) translateY(0);
+      z-index: 6;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: rgba(255, 210, 120, 0.9);
+      color: #17110a;
+      font-size: 3.4vw;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+    }
+    #copyToast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-52px);
+    }
   </style>
 </head>
 <body>
+  <div id="categoryBar"></div>
+
   <div class="wrap">
     <div class="icon">&#10024;</div>
+    <div id="categoryLabel"></div>
     <div id="blessing"></div>
     <div id="hint">Tap anywhere for a blessing</div>
   </div>
+
+  <button id="copyBtn">Copy</button>
+  <div id="copyToast">Copied!</div>
 
   <button id="aboutBtn" aria-label="About">&#8505;</button>
   <div class="overlay" id="aboutOverlay">
@@ -138,57 +223,43 @@
     </div>
   </div>
 
+  <script src="blessings-data.js"></script>
   <script>
-    var blessings = [
-      "May today bring you peace of mind and a grateful heart.",
-      "May your path be lit by kindness and good fortune.",
-      "May you find strength in this moment and hope in the next.",
-      "May love surround you and worry pass you by.",
-      "May your work be blessed and your rest be sweet.",
-      "May you be a light to someone who needs it today.",
-      "May patience guide your words and grace guide your steps.",
-      "May you be surrounded by people who lift you up.",
-      "May today's small victories bring you quiet joy.",
-      "May you walk gently through this day, and it be gentle with you.",
-      "May you find beauty in the ordinary moments today.",
-      "May your heart be light and your burdens be few.",
-      "May healing find you wherever you carry pain.",
-      "May you trust the timing of your life.",
-      "May courage rise in you exactly when you need it.",
-      "May gratitude open doors that worry has closed.",
-      "May you give yourself the same kindness you give others.",
-      "May today hold one moment that makes you smile without reason.",
-      "May you be at peace with what you cannot control.",
-      "May abundance find its way into your life, in ways big and small.",
-      "May your dreams feel a little closer today.",
-      "May you rest in the knowledge that you are enough.",
-      "May the people you love feel your love today.",
-      "May you be protected, guided, and gently held.",
-      "May today's challenges become tomorrow's strength.",
-      "May stillness find you when the world feels loud.",
-      "May forgiveness soften what anger has hardened.",
-      "May your effort today plant seeds you'll be proud of.",
-      "May wisdom meet you at every crossroad.",
-      "May joy return to you as freely as you give it away."
-    ];
+    var DATA = window.BLESSINGS_DATA;
+    var CATEGORIES = window.BLESSINGS_CATEGORIES;
+    var CONTENT_IDS = CATEGORIES.filter(function (c) { return c.id !== 'random'; }).map(function (c) { return c.id; });
 
     var blessingEl = document.getElementById('blessing');
     var hintEl = document.getElementById('hint');
+    var categoryLabelEl = document.getElementById('categoryLabel');
+    var categoryBarEl = document.getElementById('categoryBar');
+    var currentCategory = 'kids';
+    var currentText = '';
     var lastIndex = -1;
 
+    function pickCategoryId() {
+      if (currentCategory === 'random') {
+        return CONTENT_IDS[Math.floor(Math.random() * CONTENT_IDS.length)];
+      }
+      return currentCategory;
+    }
+
     function nextBlessing() {
+      var catId = pickCategoryId();
+      var list = DATA[catId];
       var i;
-      do { i = Math.floor(Math.random() * blessings.length); }
-      while (i === lastIndex && blessings.length > 1);
+      do { i = Math.floor(Math.random() * list.length); }
+      while (i === lastIndex && list.length > 1);
       lastIndex = i;
-      return blessings[i];
+      return list[i];
     }
 
     function showBlessing(x, y) {
       hintEl.style.opacity = '0';
       blessingEl.classList.remove('show');
       setTimeout(function () {
-        blessingEl.textContent = nextBlessing();
+        currentText = nextBlessing();
+        blessingEl.textContent = currentText;
         blessingEl.classList.add('show');
       }, 180);
 
@@ -207,14 +278,16 @@
       }
     }
 
+    var INTERACTIVE_SELECTOR = '#aboutBtn, #aboutOverlay, #categoryBar, #copyBtn';
+
     document.addEventListener('touchstart', function (e) {
-      if (e.target.closest('#aboutBtn, #aboutOverlay')) return;
+      if (e.target.closest(INTERACTIVE_SELECTOR)) return;
       var t = e.touches[0];
       showBlessing(t.clientX, t.clientY);
     }, { passive: true });
 
     document.addEventListener('click', function (e) {
-      if (e.target.closest('#aboutBtn, #aboutOverlay')) return;
+      if (e.target.closest(INTERACTIVE_SELECTOR)) return;
       showBlessing(e.clientX, e.clientY);
     });
 
@@ -229,6 +302,64 @@
     aboutOverlay.addEventListener('click', function (e) {
       e.stopPropagation();
       aboutOverlay.classList.remove('show');
+    });
+
+    function renderCategoryBar() {
+      categoryBarEl.innerHTML = '';
+      CATEGORIES.forEach(function (cat) {
+        var btn = document.createElement('button');
+        btn.className = 'cat-btn' + (cat.id === currentCategory ? ' active' : '');
+        btn.dataset.id = cat.id;
+        btn.innerHTML = '<span class="em">' + cat.icon + '</span><span>' + cat.label + '</span>';
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          currentCategory = cat.id;
+          renderCategoryBar();
+          categoryLabelEl.textContent = cat.label;
+          lastIndex = -1;
+          showBlessing(window.innerWidth / 2, window.innerHeight / 2);
+        });
+        categoryBarEl.appendChild(btn);
+      });
+    }
+
+    renderCategoryBar();
+    categoryLabelEl.textContent = CATEGORIES[0].label;
+
+    var copyBtn = document.getElementById('copyBtn');
+    var copyToast = document.getElementById('copyToast');
+    var copyToastTimer = null;
+
+    function fallbackCopy(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); } catch (err) {}
+      document.body.removeChild(ta);
+    }
+
+    copyBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (!currentText) return;
+      var text = currentText;
+      var done = function () {
+        copyToast.classList.add('show');
+        if (copyToastTimer) clearTimeout(copyToastTimer);
+        copyToastTimer = setTimeout(function () { copyToast.classList.remove('show'); }, 1400);
+      };
+      if (window.navigator && window.navigator.clipboard && window.navigator.clipboard.writeText) {
+        window.navigator.clipboard.writeText(text).then(done, function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
     });
   </script>
 </body>

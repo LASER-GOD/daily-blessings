@@ -1,0 +1,415 @@
+// Daily Blessings - prayer/blessing content by category.
+// Each category array is built from subject + wish combinations to guarantee
+// a large, varied set. Jewish and Catholic categories are seeded with real
+// public-domain Torah/Bible verses and traditional prayers as anchors.
+
+(function () {
+  function combine(subjects, wishes) {
+    var out = [];
+    for (var s = 0; s < subjects.length; s++) {
+      for (var w = 0; w < wishes.length; w++) {
+        out.push("May " + subjects[s] + " " + wishes[w]);
+      }
+    }
+    return out;
+  }
+
+  var KIDS_SUBJECTS = [
+    "your children", "your kids", "your little ones",
+    "the children you love", "your sons and daughters", "every child in your care"
+  ];
+  var KIDS_WISHES = [
+    "grow up surrounded by love and laughter.",
+    "always know how deeply they are cherished.",
+    "find wonder in the smallest things.",
+    "sleep soundly and dream sweetly tonight.",
+    "grow strong in body, mind, and heart.",
+    "be kept safe wherever their days take them.",
+    "learn kindness before they learn anything else.",
+    "never stop asking questions.",
+    "feel brave enough to try new things.",
+    "be surrounded by people who believe in them.",
+    "grow into who they're meant to be, gently and in their own time.",
+    "carry today's joy into tomorrow.",
+    "always find their way back home.",
+    "be patient with themselves as they learn.",
+    "know that mistakes are simply part of growing.",
+    "be filled with curiosity about the world.",
+    "have friends who treat them with kindness.",
+    "trust their own voice.",
+    "find joy in learning something new today.",
+    "be protected from harm, seen and unseen.",
+    "grow up knowing they are never alone.",
+    "keep their imagination wild and free.",
+    "be gentle with others and with themselves.",
+    "find comfort in your arms whenever they need it.",
+    "grow taller in courage every single day.",
+    "always feel like they belong.",
+    "be blessed with good health and endless energy.",
+    "learn to love reading, and reading to love them back.",
+    "find a mentor who sees their potential.",
+    "keep laughing, loudly and often.",
+    "grow into kindness the way flowers grow into sunlight.",
+    "be surrounded by role models worth following.",
+    "have the confidence to stand up for what's right.",
+    "never lose their sense of play.",
+    "be blessed with patient, caring teachers.",
+    "grow up knowing how to forgive and be forgiven.",
+    "find their own path, even when it winds.",
+    "be shielded from every storm life sends their way.",
+    "know deep in their bones that they are loved unconditionally.",
+    "carry your blessing with them wherever they go."
+  ];
+
+  var FAMILY_SUBJECTS = [
+    "your family", "your loved ones", "your household",
+    "those who share your table", "your family circle", "everyone who calls you home"
+  ];
+  var FAMILY_WISHES = [
+    "be bound together by love that never runs thin.",
+    "find peace under one roof tonight.",
+    "forgive quickly and love without condition.",
+    "gather often and never take it for granted.",
+    "be blessed with health, laughter, and long life.",
+    "hold on to each other through every season.",
+    "find comfort in one another's company.",
+    "share meals full of warmth and gratitude.",
+    "grow closer with every passing year.",
+    "be a safe harbor for one another.",
+    "carry each other's burdens without complaint.",
+    "celebrate the small wins together.",
+    "never run out of reasons to laugh together.",
+    "be surrounded by peace this season.",
+    "hold traditions that bring you closer, year after year.",
+    "find strength in each other when the world feels heavy.",
+    "be quick to say 'I love you' and mean it.",
+    "keep your door, and your hearts, open to one another.",
+    "weather every storm side by side.",
+    "be remembered for the love you gave, not the things you owned.",
+    "find joy in ordinary evenings together.",
+    "be knit together in a bond nothing can break.",
+    "always have a seat saved at the table.",
+    "share in one another's joys as if they were your own.",
+    "be patient with old wounds and gentle with new ones.",
+    "grow a home filled with more laughter than silence.",
+    "be each other's loudest cheerleaders.",
+    "find rest in each other's presence.",
+    "hold fast to what truly matters.",
+    "be blessed with many more years together.",
+    "never go to bed angry.",
+    "find grace for each other on hard days.",
+    "be the kind of family others hope to find.",
+    "keep each other close, no matter the distance.",
+    "build memories worth holding onto forever.",
+    "be a circle that only ever grows wider.",
+    "know that home is wherever you all are.",
+    "carry your grandparents' blessings into tomorrow.",
+    "be thankful for one another today and always.",
+    "find your greatest joy in each other."
+  ];
+
+  var FRIENDS_SUBJECTS = [
+    "your friends", "the friends who stand by you", "your closest friends",
+    "the people who know your heart", "your circle of friends", "the friends who feel like family"
+  ];
+  var FRIENDS_WISHES = [
+    "show up exactly when you need them most.",
+    "make you laugh until your sides hurt.",
+    "tell you the truth, even when it's hard.",
+    "celebrate your wins like their own.",
+    "stay close no matter how far life takes you.",
+    "remind you who you are on your hardest days.",
+    "be the kind of friends worth keeping forever.",
+    "never let too much time pass between hellos.",
+    "answer the call at 2 a.m. without hesitation.",
+    "see the best in you, even when you can't.",
+    "be a soft place to land.",
+    "make ordinary days feel like something special.",
+    "stick around through every season of your life.",
+    "forgive easily and love loyally.",
+    "cheer loudest for your dreams.",
+    "give you honesty wrapped in kindness.",
+    "be the family you got to choose.",
+    "know your story and love you anyway.",
+    "bring out the best version of you.",
+    "fill your life with inside jokes and good memories.",
+    "sit with you in silence when words aren't enough.",
+    "remind you that you're never truly alone.",
+    "be there for the small moments, not just the big ones.",
+    "keep showing up, year after year.",
+    "make your circle feel like home.",
+    "be quick to check in and slow to judge.",
+    "hold space for you exactly as you are.",
+    "reflect your best self back to you.",
+    "walk beside you, not ahead or behind.",
+    "make your hard days lighter just by being there.",
+    "be the first call when something good happens.",
+    "never make you feel like too much.",
+    "give freely and expect nothing back.",
+    "be loyal in a world that often isn't.",
+    "help carry what you can't carry alone.",
+    "stay long after the good times fade.",
+    "be a constant in a world that keeps changing.",
+    "root for you even when you stop rooting for yourself.",
+    "make you feel understood without needing to explain.",
+    "be blessed for all the ways they've blessed you."
+  ];
+
+  var GRIEVING_SUBJECTS = [
+    "you in this grief", "your grieving heart", "you as you mourn",
+    "you in this season of loss", "your heavy heart", "you as you remember"
+  ];
+  var GRIEVING_WISHES = [
+    "find moments of peace amid the pain.",
+    "feel less alone with each new day.",
+    "be held gently by those who love you.",
+    "find comfort in memory, even through tears.",
+    "know that grief is love with nowhere to go.",
+    "be given the time you need to heal.",
+    "feel the presence of those you've lost, close and near.",
+    "find rest for a heart that's carrying so much.",
+    "be surrounded by people who don't rush your healing.",
+    "find small moments of light in the darkness.",
+    "know it's alright to grieve in your own way.",
+    "feel less weight on days that feel unbearable.",
+    "find peace in knowing love never really leaves.",
+    "be gentle with yourself as you find your way through this.",
+    "carry their memory as a comfort, not just a sorrow.",
+    "find strength you didn't know you had.",
+    "feel wrapped in comfort when the nights are long.",
+    "know that healing doesn't mean forgetting.",
+    "find someone to lean on when the weight feels like too much.",
+    "be reminded that this pain will soften with time.",
+    "hold onto the love that remains, even after loss.",
+    "find quiet moments of grace in your mourning.",
+    "feel less broken with every sunrise.",
+    "know that your tears are a testament to your love.",
+    "find peace in unanswered questions.",
+    "carry their light forward in the way you live.",
+    "feel comforted by all the love that surrounds you still.",
+    "find your breath again, one day at a time.",
+    "be met with patience, not pressure, in your healing.",
+    "know that it's okay to feel joy again, in time.",
+    "find solace in the story of a life well loved.",
+    "feel less alone in the quiet hours.",
+    "be surrounded by memories that bring more warmth than pain.",
+    "find the strength to face today, and let that be enough.",
+    "know that grief, like love, has no expiration date.",
+    "find peace in honoring their memory in your own way.",
+    "feel the ache soften into something bearable.",
+    "be given grace for the days that feel impossible.",
+    "find comfort in knowing you were loved, and you loved well.",
+    "carry this loss gently, as a testament to love, not a burden."
+  ];
+
+  var HEALING_SUBJECTS = [
+    "you in this healing", "your body and spirit", "you as you recover",
+    "your weary body", "you in this struggle", "your healing journey"
+  ];
+  var HEALING_WISHES = [
+    "grow stronger with every new day.",
+    "find rest that truly restores you.",
+    "be met with patience as you heal.",
+    "feel the ache ease a little more each day.",
+    "be surrounded by care and comfort.",
+    "find strength you didn't know you had.",
+    "know that healing isn't a straight line, and that's alright.",
+    "feel hope rise even on the hardest days.",
+    "be gentle with yourself through this recovery.",
+    "find relief where there has been pain.",
+    "feel your body's quiet strength returning.",
+    "be held up by those who love you.",
+    "find peace in each small step forward.",
+    "know that resting is part of healing, not a delay of it.",
+    "feel lighter with every day that passes.",
+    "be blessed with good news and better days ahead.",
+    "find comfort in every small improvement.",
+    "feel your strength return, breath by breath.",
+    "be surrounded by hands that help and hearts that care.",
+    "know that you are more resilient than you feel today.",
+    "find the courage to keep going, one day at a time.",
+    "be met with grace on the days progress feels slow.",
+    "feel your body doing the quiet work of healing.",
+    "find calm in the midst of uncertainty.",
+    "be wrapped in comfort through every treatment and test.",
+    "know that you are not alone in this fight.",
+    "find strength renewed with every sunrise.",
+    "feel your pain lessen and your hope grow.",
+    "be surrounded by prayers said on your behalf.",
+    "find the rest your body has been asking for.",
+    "know that healing takes as long as it takes, and that's okay.",
+    "feel steadier with each new day.",
+    "be blessed with caregivers who truly see you.",
+    "find peace even before the healing is complete.",
+    "feel your strength outlast this struggle.",
+    "be given exactly what you need to recover fully.",
+    "know that better days are closer than they feel.",
+    "find your body and spirit healing together.",
+    "feel gratitude even in the difficulty of recovery.",
+    "carry hope with you through every step of this healing."
+  ];
+
+  var JEWISH_ANCHORS = [
+    "The LORD bless thee, and keep thee. (Numbers 6:24)",
+    "The LORD make His face shine upon thee, and be gracious unto thee. (Numbers 6:25)",
+    "The LORD lift up His countenance upon thee, and give thee peace. (Numbers 6:26)",
+    "Hear, O Israel: the LORD our God, the LORD is One. (Deuteronomy 6:4)",
+    "The angel who has redeemed me from all evil, bless the lads. (Genesis 48:16)",
+    "I will bless thee, and make thy name great; and thou shalt be a blessing. (Genesis 12:2)",
+    "The LORD is my shepherd; I shall not want. (Psalm 23:1)",
+    "He restoreth my soul: He leadeth me in the paths of righteousness for His name's sake. (Psalm 23:3)",
+    "I will lift up mine eyes unto the hills, from whence cometh my help. (Psalm 121:1)",
+    "The LORD is thy keeper; the LORD is thy shade upon thy right hand. (Psalm 121:5)",
+    "The LORD shall preserve thy going out and thy coming in, from this time forth and for evermore. (Psalm 121:8)",
+    "Trust in the LORD with all thine heart, and lean not unto thine own understanding. (Proverbs 3:5)",
+    "In all thy ways acknowledge Him, and He shall direct thy paths. (Proverbs 3:6)",
+    "Be strong and of good courage, fear not: for the LORD thy God, He it is that doth go with thee. (Deuteronomy 31:6)",
+    "This is the day which the LORD hath made; we will rejoice and be glad in it. (Psalm 118:24)",
+    "A threefold cord is not quickly broken. (Ecclesiastes 4:12)",
+    "To every thing there is a season, and a time to every purpose under heaven. (Ecclesiastes 3:1)",
+    "Who is wise? One who learns from every person. (Pirkei Avot 4:1)",
+    "Whoever saves a single life is considered to have saved an entire world. (Mishnah Sanhedrin 4:5)",
+    "In a place where there are no worthy individuals, strive to be worthy. (Pirkei Avot 2:6)",
+    "Baruch atah Adonai, blessed are You, LORD our God, King of the universe. (traditional blessing formula)",
+    "May you be inscribed and sealed for a good year. (traditional New Year blessing)",
+    "May the source of strength who blessed those who came before us, help us find the courage to make our lives a blessing. (traditional Mi Shebeirach)",
+    "Shalom aleichem — peace be upon you. (traditional Sabbath greeting)",
+    "May the LORD bless you and your household, now and always. (Numbers 6:24-26, adapted)",
+    "Blessed are You, LORD, who spreads a shelter of peace over all Your people Israel and over Jerusalem. (traditional evening prayer)"
+  ];
+  var JEWISH_SUBJECTS = [
+    "you and your household", "your family this Sabbath", "your loved ones",
+    "you and yours", "your household", "the people you hold dear"
+  ];
+  var JEWISH_WISHES = [
+    "be blessed and kept by Hashem always.",
+    "walk in the light of Torah all their days.",
+    "find peace this Shabbat and every day after.",
+    "be written into a year of health and sweetness.",
+    "know the shelter of Hashem's peace.",
+    "be blessed as Abraham, Isaac, and Jacob were blessed.",
+    "find wisdom in the words of Torah.",
+    "be granted a life of shalom, wholeness, and peace.",
+    "walk humbly and do justice all their days.",
+    "be sealed for goodness in the year ahead.",
+    "find strength in the mitzvot they keep.",
+    "be gathered together in health and joy.",
+    "know Hashem's presence in every season.",
+    "be blessed as Sarah, Rebecca, Rachel, and Leah were blessed.",
+    "find rest and renewal each Shabbat.",
+    "carry the light of the Torah into the world.",
+    "be kept safe under the wings of the Shechinah.",
+    "find comfort in the words of the Psalms.",
+    "know abundance and peace in their home.",
+    "be blessed with a good name and a good heart.",
+    "walk in the ways of loving-kindness.",
+    "find joy in the mitzvah of gathering together.",
+    "be granted long life and good health.",
+    "carry the blessing of Aaron with them always.",
+    "find their portion in a world of peace.",
+    "be inscribed in the Book of Life.",
+    "know the strength of the generations before them.",
+    "be blessed coming in and blessed going out.",
+    "find shalom bayit — peace in the home.",
+    "walk always toward tikkun olam, repairing the world.",
+    "be sustained by faith through every season.",
+    "carry the memory of ancestors as a blessing, not a burden.",
+    "find gratitude in the ordinary gifts of each day.",
+    "be blessed with community that lifts them up.",
+    "know that Hashem's covenant is with them always."
+  ];
+
+  var CATHOLIC_ANCHORS = [
+    "The LORD bless you and keep you. (Numbers 6:24)",
+    "Peace I leave with you, my peace I give unto you. (John 14:27)",
+    "Fear not, for I am with you. (Isaiah 41:10, adapted)",
+    "The LORD is my shepherd; I shall not want. (Psalm 23:1)",
+    "Cast all your anxiety on Him because He cares for you. (1 Peter 5:7)",
+    "And we know that all things work together for good to them that love God. (Romans 8:28)",
+    "I can do all things through Christ which strengtheneth me. (Philippians 4:13)",
+    "Be careful for nothing; but in every thing by prayer let your requests be made known unto God. (Philippians 4:6)",
+    "And the peace of God, which passeth all understanding, shall keep your hearts and minds. (Philippians 4:7)",
+    "For I know the plans I have for you, plans to give you hope and a future. (Jeremiah 29:11)",
+    "Blessed are the poor in spirit: for theirs is the kingdom of heaven. (Matthew 5:3)",
+    "Blessed are they that mourn: for they shall be comforted. (Matthew 5:4)",
+    "Blessed are the merciful: for they shall obtain mercy. (Matthew 5:7)",
+    "Blessed are the peacemakers: for they shall be called the children of God. (Matthew 5:9)",
+    "My grace is sufficient for thee: for my strength is made perfect in weakness. (2 Corinthians 12:9)",
+    "Now the God of hope fill you with all joy and peace in believing. (Romans 15:13)",
+    "Be strong and of a good courage; be not afraid. (Joshua 1:9)",
+    "The LORD thy God is with thee whithersoever thou goest. (Joshua 1:9, adapted)",
+    "Love is patient, love is kind. (1 Corinthians 13:4)",
+    "Lord, make me an instrument of your peace. (Prayer of St. Francis)",
+    "Where there is hatred, let me sow love. (Prayer of St. Francis)",
+    "Our Father, who art in heaven, hallowed be Thy name. (The Lord's Prayer)",
+    "Hail Mary, full of grace, the Lord is with thee. (traditional Catholic prayer)",
+    "May the road rise up to meet you, may the wind be always at your back. (traditional Irish blessing)",
+    "May God hold you in the palm of His hand. (traditional Irish blessing)",
+    "The LORD bless you and keep you; the LORD make His face shine upon you and be gracious to you. (Numbers 6:24-25)"
+  ];
+  var CATHOLIC_SUBJECTS = [
+    "you and your family", "your household", "your loved ones",
+    "you and those you love", "your family this day", "all who are dear to you"
+  ];
+  var CATHOLIC_WISHES = [
+    "walk always in the light of Christ.",
+    "be held safely in God's hands.",
+    "know the peace that surpasses all understanding.",
+    "be blessed with faith, hope, and love.",
+    "feel God's grace in every season of life.",
+    "be strengthened by prayer each day.",
+    "find comfort in the Lord's promises.",
+    "be guided by the Holy Spirit in all things.",
+    "know God's mercy, new every morning.",
+    "walk by faith and not by sight.",
+    "be filled with the fruits of the Spirit.",
+    "find rest in the arms of the Father.",
+    "be blessed with a heart of gratitude.",
+    "carry Christ's peace into every room they enter.",
+    "know that they are fearfully and wonderfully made.",
+    "be covered by God's grace this day.",
+    "find strength through every trial.",
+    "be blessed with a faith that never wavers.",
+    "know the joy of the Lord as their strength.",
+    "walk humbly with their God.",
+    "be surrounded by God's steadfast love.",
+    "find hope renewed like the morning sun.",
+    "be blessed with the peace only Christ can give.",
+    "carry gratitude for every blessing, seen and unseen.",
+    "be kept safe under God's watchful eye.",
+    "know that they are never alone, for God is near.",
+    "find comfort in the communion of saints.",
+    "be blessed with patience and perseverance.",
+    "walk in love as Christ loved us.",
+    "find their strength renewed like eagles' wings.",
+    "be filled with the light that darkness cannot overcome.",
+    "know the Father's love in every circumstance.",
+    "be blessed abundantly, above all they ask or imagine.",
+    "carry faith like a lamp unto their feet.",
+    "find their rest and their refuge in the Lord."
+  ];
+
+  var DATA = {
+    kids: combine(KIDS_SUBJECTS, KIDS_WISHES),
+    family: combine(FAMILY_SUBJECTS, FAMILY_WISHES),
+    friends: combine(FRIENDS_SUBJECTS, FRIENDS_WISHES),
+    grieving: combine(GRIEVING_SUBJECTS, GRIEVING_WISHES),
+    healing: combine(HEALING_SUBJECTS, HEALING_WISHES),
+    jewish: JEWISH_ANCHORS.concat(combine(JEWISH_SUBJECTS, JEWISH_WISHES)),
+    catholic: CATHOLIC_ANCHORS.concat(combine(CATHOLIC_SUBJECTS, CATHOLIC_WISHES))
+  };
+
+  var CATEGORIES = [
+    { id: "kids", label: "Kids", icon: "🧒" },
+    { id: "family", label: "Family", icon: "🏡" },
+    { id: "friends", label: "Friends", icon: "🤝" },
+    { id: "grieving", label: "Grieving", icon: "🕊️" },
+    { id: "healing", label: "Healing", icon: "🌿" },
+    { id: "jewish", label: "Jewish", icon: "✡️" },
+    { id: "catholic", label: "Catholic", icon: "✝️" },
+    { id: "random", label: "Random", icon: "🎲" }
+  ];
+
+  window.BLESSINGS_DATA = DATA;
+  window.BLESSINGS_CATEGORIES = CATEGORIES;
+})();
