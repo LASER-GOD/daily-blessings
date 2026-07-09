@@ -35,6 +35,7 @@
       padding: 8vw;
       text-align: center;
       gap: 5vh;
+      transform: translateY(-8vh);
     }
     .icon {
       font-size: 14vw;
@@ -88,28 +89,109 @@
       z-index: 10;
       padding: 8vw;
       text-align: center;
+      overflow-y: auto;
     }
     .overlay.show { display: flex; }
+    #aboutOverlay { align-items: flex-start; }
+    #aboutOverlay .about-card { margin-top: 6vh; }
+    .about-footer .build-info {
+      opacity: 0.55;
+      font-size: 3vw;
+      letter-spacing: 0.5px;
+    }
+    .about-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5vh;
+    }
+    .about-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5vh;
+    }
+    .about-header .about-icon {
+      font-size: 11vw;
+    }
     .about-card h2 {
-      font-size: 6vw;
-      margin-bottom: 3vh;
+      font-family: "Bookman Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      font-style: italic;
+      font-size: 6.5vw;
+      letter-spacing: 0.5px;
       color: #ffd27a;
+      text-shadow: 0 0 14px rgba(255, 210, 120, 0.45);
     }
     .about-card p {
       font-size: 4.2vw;
       line-height: 1.6;
-      margin-bottom: 1vh;
     }
     .about-card .site {
       color: #c9a86a;
       letter-spacing: 1px;
     }
-    #categoryBar {
+    .about-card .special-message {
+      font-style: italic;
+      color: #ffe9c4;
+      line-height: 1.7;
+    }
+    .about-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.2vh;
+      margin-top: 3vh;
+    }
+    .version-card {
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: left;
+    }
+    .version-card h2 {
+      font-size: 5.5vw;
+      color: #ffd27a;
+      text-align: center;
+      margin-bottom: 3vh;
+    }
+    .version-entry {
+      margin-bottom: 2.2vh;
+      padding-bottom: 2.2vh;
+      border-bottom: 1px solid rgba(255, 210, 120, 0.18);
+    }
+    .version-entry:last-child { border-bottom: none; }
+    .version-entry .v-num {
+      font-size: 4vw;
+      color: #ffd27a;
+      font-weight: bold;
+      margin-bottom: 0.6vh;
+    }
+    .version-entry .v-notes {
+      font-size: 3.4vw;
+      line-height: 1.5;
+      color: #e8d9c0;
+    }
+    #topBar {
       position: fixed;
       top: max(env(safe-area-inset-top), 10px);
       left: 10px;
       right: 10px;
       z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    #appTitle {
+      font-family: "Bookman Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      font-style: italic;
+      font-size: 5vw;
+      letter-spacing: 0.5px;
+      color: #ffd27a;
+      text-shadow: 0 0 14px rgba(255, 210, 120, 0.45);
+    }
+    #categoryBar {
+      width: 100%;
       display: flex;
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -132,7 +214,11 @@
       font-size: 11px;
       letter-spacing: 0.3px;
       white-space: nowrap;
+      touch-action: manipulation;
+      cursor: pointer;
+      transition: transform 0.1s ease;
     }
+    .cat-btn:active { transform: scale(0.93); }
     .cat-btn .em { font-size: 13px; }
     .cat-btn.active {
       background: rgba(255, 210, 120, 0.28);
@@ -163,16 +249,25 @@
       gap: 10px;
     }
     .action-btn {
-      padding: 10px 22px;
+      padding: 13px 22px;
+      min-width: 34vw;
       border-radius: 999px;
       background: rgba(255, 210, 120, 0.12);
       border: 1px solid rgba(255, 210, 120, 0.4);
       color: #ffd27a;
       font-family: Georgia, serif;
-      font-size: 3.4vw;
+      font-size: 4.2vw;
       letter-spacing: 1px;
       text-transform: uppercase;
       white-space: nowrap;
+      text-align: center;
+      touch-action: manipulation;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.1s ease;
+    }
+    .action-btn:active {
+      transform: scale(0.94);
+      background: rgba(255, 210, 120, 0.24);
     }
     #copyToast {
       position: fixed;
@@ -198,7 +293,10 @@
   </style>
 </head>
 <body>
-  <div id="categoryBar"></div>
+  <div id="topBar">
+    <div id="appTitle">My Daily Blessings</div>
+    <div id="categoryBar"></div>
+  </div>
 
   <div class="wrap">
     <div class="icon">&#10024;</div>
@@ -215,16 +313,38 @@
 
   <div class="overlay" id="aboutOverlay">
     <div class="about-card">
-      <h2>Daily Blessings</h2>
-      <p>Programmed by <strong>LASER GOD</strong></p>
-      <p class="site">WWW.BARUKH.COM</p>
-      <p style="margin-top: 3vh; opacity: 0.7; font-size: 3.6vw;">Tap anywhere to close</p>
+      <div class="about-header">
+        <div class="icon about-icon">&#10024;</div>
+        <h2>My Daily Blessings</h2>
+      </div>
+      <p class="special-message">To my family and friends: may this day find you blessed, and may it be filled with much love.</p>
+      <div class="about-footer">
+        <p>Programmed by <strong>LASER GOD</strong></p>
+        <p class="site">WWW.BARUKH.COM</p>
+        <p style="opacity: 0.7; font-size: 3.6vw;">Tap anywhere to close</p>
+        <p class="build-info" id="buildInfo"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="versionOverlay">
+    <div class="version-card">
+      <h2>Version History</h2>
+      <div id="versionList"></div>
     </div>
   </div>
 
   <script src="blessings-data.js"></script>
   <script>
-    var APP_VERSION = 'v1.2';
+    var APP_VERSION = 'v1.4';
+    var BUILD_DATE = 'July 8, 2026 · 8:37 PM PT';
+    var VERSION_HISTORY = [
+      { v: 'v1.4', notes: 'Added the "My Daily Blessings" title, a version history viewer, a special family & friends message in About, and a new Motivational category.' },
+      { v: 'v1.3', notes: 'Faster, more responsive buttons; moved the blessing text higher on screen; cleaned up the About button; made Copy and Text It bigger and equal size.' },
+      { v: 'v1.2', notes: 'Fixed a double-tap bug; reordered categories (Family, Healing first); added a Text It button; moved About into the scrolling list; updated the site link.' },
+      { v: 'v1.1', notes: 'Added 8 prayer/blessing categories (Kids, Family, Friends, Grieving, Healing, Jewish, Catholic, Random) with 200+ blessings each, plus a Copy button.' },
+      { v: 'v1.0', notes: 'Initial release. Tap anywhere for a blessing, custom app icon, About screen, and iOS/Android support.' }
+    ];
     var DATA = window.BLESSINGS_DATA;
     var CATEGORIES = window.BLESSINGS_CATEGORIES;
     var CONTENT_IDS = CATEGORIES.filter(function (c) { return c.id !== 'random'; }).map(function (c) { return c.id; });
@@ -234,6 +354,8 @@
     var categoryLabelEl = document.getElementById('categoryLabel');
     var categoryBarEl = document.getElementById('categoryBar');
     var aboutOverlay = document.getElementById('aboutOverlay');
+    var versionOverlay = document.getElementById('versionOverlay');
+    var versionListEl = document.getElementById('versionList');
     var currentCategory = CATEGORIES[0].id;
     var currentText = '';
     var lastIndex = -1;
@@ -291,7 +413,23 @@
       showBlessing(x, y);
     }
 
-    var INTERACTIVE_SELECTOR = '#aboutOverlay, #categoryBar, #actionBar';
+    // Buttons wait on the browser's synthetic 'click' event by default, which can
+    // lag behind the physical tap. bindTap responds instantly on touchstart and
+    // suppresses the click that follows the same tap, so buttons feel immediate.
+    function bindTap(el, handler) {
+      var touched = false;
+      el.addEventListener('touchstart', function (e) {
+        touched = true;
+        handler(e);
+        setTimeout(function () { touched = false; }, 500);
+      }, { passive: true });
+      el.addEventListener('click', function (e) {
+        if (touched) return;
+        handler(e);
+      });
+    }
+
+    var INTERACTIVE_SELECTOR = '#aboutOverlay, #versionOverlay, #topBar, #actionBar';
 
     document.addEventListener('touchstart', function (e) {
       if (e.target.closest(INTERACTIVE_SELECTOR)) return;
@@ -309,6 +447,17 @@
       aboutOverlay.classList.remove('show');
     });
 
+    document.getElementById('buildInfo').textContent = APP_VERSION + '  •  Updated ' + BUILD_DATE;
+
+    versionListEl.innerHTML = VERSION_HISTORY.map(function (entry) {
+      return '<div class="version-entry"><div class="v-num">' + entry.v + '</div><div class="v-notes">' + entry.notes + '</div></div>';
+    }).join('');
+
+    versionOverlay.addEventListener('click', function (e) {
+      e.stopPropagation();
+      versionOverlay.classList.remove('show');
+    });
+
     function renderCategoryBar() {
       categoryBarEl.innerHTML = '';
 
@@ -317,7 +466,7 @@
         btn.className = 'cat-btn' + (cat.id === currentCategory ? ' active' : '');
         btn.dataset.id = cat.id;
         btn.innerHTML = '<span class="em">' + cat.icon + '</span><span>' + cat.label + '</span>';
-        btn.addEventListener('click', function (e) {
+        bindTap(btn, function (e) {
           e.stopPropagation();
           currentCategory = cat.id;
           renderCategoryBar();
@@ -330,16 +479,20 @@
 
       var aboutChip = document.createElement('button');
       aboutChip.className = 'cat-btn';
-      aboutChip.innerHTML = '<span class="em">&#8505;</span><span>About</span>';
-      aboutChip.addEventListener('click', function (e) {
+      aboutChip.innerHTML = '<span>About</span>';
+      bindTap(aboutChip, function (e) {
         e.stopPropagation();
         aboutOverlay.classList.add('show');
       });
       categoryBarEl.appendChild(aboutChip);
 
-      var versionChip = document.createElement('div');
+      var versionChip = document.createElement('button');
       versionChip.className = 'cat-btn version-chip';
       versionChip.textContent = APP_VERSION;
+      bindTap(versionChip, function (e) {
+        e.stopPropagation();
+        versionOverlay.classList.add('show');
+      });
       categoryBarEl.appendChild(versionChip);
     }
 
@@ -384,13 +537,13 @@
       copyToastTimer = setTimeout(function () { copyToast.classList.remove('show'); }, 1600);
     }
 
-    copyBtn.addEventListener('click', function (e) {
+    bindTap(copyBtn, function (e) {
       e.stopPropagation();
       if (!currentText) return;
       copyText(currentText).then(function () { showToast('Copied!'); });
     });
 
-    messageBtn.addEventListener('click', function (e) {
+    bindTap(messageBtn, function (e) {
       e.stopPropagation();
       if (!currentText) return;
       var text = currentText;

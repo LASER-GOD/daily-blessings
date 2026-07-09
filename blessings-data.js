@@ -389,6 +389,53 @@
     "find their rest and their refuge in the Lord."
   ];
 
+  var MOTIVATIONAL_SUBJECTS = [
+    "you today", "your efforts", "your ambition",
+    "your inner strength", "your journey", "every step you take"
+  ];
+  var MOTIVATIONAL_WISHES = [
+    "carry you further than you ever imagined.",
+    "turn every setback into a comeback.",
+    "remind you that you are capable of more than you know.",
+    "fuel you to chase what truly matters.",
+    "keep you moving forward, one step at a time.",
+    "turn today's effort into tomorrow's victory.",
+    "show you that hard work always pays off.",
+    "give you the courage to bet on yourself.",
+    "prove that persistence beats perfection.",
+    "remind you that you've survived every hard day so far.",
+    "push you past the doubts that hold you back.",
+    "turn obstacles into stepping stones.",
+    "keep your fire lit even on the hardest days.",
+    "show you that discipline outlasts motivation.",
+    "remind you that greatness is built one small habit at a time.",
+    "carry you closer to the person you're becoming.",
+    "turn your struggles into your strength.",
+    "keep you focused on progress, not perfection.",
+    "remind you that you are your only real competition.",
+    "give you the confidence to take the leap.",
+    "show you that failure is only proof that you tried.",
+    "keep you hungry for growth.",
+    "remind you that consistency is the real superpower.",
+    "turn your dreams into a plan, and your plan into action.",
+    "give you the strength to start again, as many times as it takes.",
+    "remind you that you don't need to be perfect, just persistent.",
+    "keep your goals bigger than your excuses.",
+    "show you that every expert was once a beginner.",
+    "carry you through the doubt and into the doing.",
+    "remind you that the hardest part is just showing up.",
+    "keep you grounded, even as you reach higher.",
+    "prove that small steps still move mountains.",
+    "give you the grit to outlast every obstacle.",
+    "remind you why you started.",
+    "turn pressure into fuel.",
+    "keep you believing when belief is all you have.",
+    "show you that discomfort is where growth happens.",
+    "carry you to the other side of hard.",
+    "remind you that your best is always enough.",
+    "keep pushing you toward the life you're building."
+  ];
+
   var DATA = {
     kids: combine(KIDS_SUBJECTS, KIDS_WISHES),
     family: combine(FAMILY_SUBJECTS, FAMILY_WISHES),
@@ -396,7 +443,8 @@
     grieving: combine(GRIEVING_SUBJECTS, GRIEVING_WISHES),
     healing: combine(HEALING_SUBJECTS, HEALING_WISHES),
     jewish: JEWISH_ANCHORS.concat(combine(JEWISH_SUBJECTS, JEWISH_WISHES)),
-    catholic: CATHOLIC_ANCHORS.concat(combine(CATHOLIC_SUBJECTS, CATHOLIC_WISHES))
+    catholic: CATHOLIC_ANCHORS.concat(combine(CATHOLIC_SUBJECTS, CATHOLIC_WISHES)),
+    motivational: combine(MOTIVATIONAL_SUBJECTS, MOTIVATIONAL_WISHES)
   };
 
   var CATEGORIES = [
@@ -407,6 +455,7 @@
     { id: "grieving", label: "Grieving", icon: "🕊️" },
     { id: "jewish", label: "Jewish", icon: "✡️" },
     { id: "catholic", label: "Catholic", icon: "✝️" },
+    { id: "motivational", label: "Motivational", icon: "🔥" },
     { id: "random", label: "Random", icon: "🎲" }
   ];
 
