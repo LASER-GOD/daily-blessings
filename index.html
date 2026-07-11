@@ -104,6 +104,12 @@
       font-size: 3vw;
       letter-spacing: 0.5px;
     }
+    .about-footer .stat-line {
+      opacity: 0.75;
+      font-size: 3.4vw;
+      color: #c9a86a;
+      letter-spacing: 0.5px;
+    }
     .about-card {
       display: flex;
       flex-direction: column;
@@ -327,6 +333,8 @@
         <p>Programmed by <strong>LASER GOD</strong></p>
         <p class="site">WWW.BARUKH.COM</p>
         <p style="opacity: 0.7; font-size: 3.6vw;">Tap anywhere to close</p>
+        <p class="stat-line" id="usageCountLine"></p>
+        <p class="stat-line" id="sayingCountLine"></p>
         <p class="build-info" id="buildInfo"></p>
       </div>
     </div>
@@ -341,9 +349,10 @@
 
   <script src="blessings-data.js"></script>
   <script>
-    var APP_VERSION = 'v1.9';
-    var BUILD_DATE = 'July 8, 2026 · 10:16 PM PT';
+    var APP_VERSION = 'v1.10';
+    var BUILD_DATE = 'July 10, 2026 · 6:40 PM PT';
     var VERSION_HISTORY = [
+      { v: 'v1.10', notes: 'Added two stats to the About page: how many times the app has been opened on this device, and the total number of blessings & sayings across all categories.' },
       { v: 'v1.9', notes: 'The "tap anywhere" hint no longer disappears after the first tap — it now stays on screen as a small, faded "tap for more" reminder so it\'s always clear there\'s more to see.' },
       { v: 'v1.8', notes: 'Blessing selection now uses the current clock seconds to pick a rotating starting point on the list before randomizing, so picks don’t cluster near the start of the list.' },
       { v: 'v1.7', notes: 'Removed the Hindi category.' },
@@ -480,6 +489,24 @@
     });
 
     document.getElementById('buildInfo').textContent = APP_VERSION + '  •  Updated ' + BUILD_DATE;
+
+    // Usage counter: incremented once per app open (not per tap), persisted
+    // on-device via localStorage so it survives closing and reopening the app.
+    var USAGE_COUNT_KEY = 'dailyBlessingsUsageCount';
+    var usageCount = 0;
+    try {
+      usageCount = parseInt(window.localStorage.getItem(USAGE_COUNT_KEY), 10) || 0;
+      usageCount += 1;
+      window.localStorage.setItem(USAGE_COUNT_KEY, String(usageCount));
+    } catch (err) { /* localStorage unavailable: just show this session as 1 */
+      usageCount = 1;
+    }
+    document.getElementById('usageCountLine').textContent =
+      'Opened ' + usageCount.toLocaleString() + (usageCount === 1 ? ' time' : ' times') + ' on this device';
+
+    var totalSayings = CONTENT_IDS.reduce(function (sum, id) { return sum + DATA[id].length; }, 0);
+    document.getElementById('sayingCountLine').textContent =
+      totalSayings.toLocaleString() + ' blessings & sayings across ' + CONTENT_IDS.length + ' categories';
 
     versionListEl.innerHTML = VERSION_HISTORY.map(function (entry) {
       return '<div class="version-entry"><div class="v-num">' + entry.v + '</div><div class="v-notes">' + entry.notes + '</div></div>';
