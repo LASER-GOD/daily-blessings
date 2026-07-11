@@ -257,7 +257,33 @@
       transform: translateX(-50%);
       z-index: 5;
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    #actionRow {
+      display: flex;
       gap: 10px;
+    }
+    #heartBtn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 210, 120, 0.1);
+      border: 1px solid rgba(255, 210, 120, 0.35);
+      color: #ffd27a;
+      font-size: 19px;
+      line-height: 1;
+      touch-action: manipulation;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.1s ease, color 0.1s ease;
+    }
+    #heartBtn:active { transform: scale(0.9); }
+    #heartBtn.active {
+      color: #ff6b81;
+      background: rgba(255, 107, 129, 0.15);
+      border-color: rgba(255, 107, 129, 0.5);
+      box-shadow: 0 0 10px rgba(255, 107, 129, 0.45);
     }
     .action-btn {
       padding: 13px 22px;
@@ -317,8 +343,11 @@
   </div>
 
   <div id="actionBar">
-    <button id="copyBtn" class="action-btn">Copy</button>
-    <button id="messageBtn" class="action-btn">Text It</button>
+    <div id="actionRow">
+      <button id="copyBtn" class="action-btn">Copy</button>
+      <button id="messageBtn" class="action-btn">Text It</button>
+    </div>
+    <button id="heartBtn" aria-label="Save to favorites">&#9825;</button>
   </div>
   <div id="copyToast">Copied!</div>
 
@@ -349,9 +378,10 @@
 
   <script src="blessings-data.js"></script>
   <script>
-    var APP_VERSION = 'v2.0';
-    var BUILD_DATE = 'July 10, 2026 · 6:40 PM PT';
+    var APP_VERSION = 'v2.1';
+    var BUILD_DATE = 'July 10, 2026 · 6:52 PM PT';
     var VERSION_HISTORY = [
+      { v: 'v2.1', notes: 'Added a heart button at the bottom to save the current blessing to Favorites, and a new "Favorites" category button at the top to browse everything you\'ve saved.' },
       { v: 'v2.0', notes: 'Added two stats to the About page: how many times the app has been opened on this device, and the total number of blessings & sayings across all categories.' },
       { v: 'v1.9', notes: 'The "tap anywhere" hint no longer disappears after the first tap — it now stays on screen as a small, faded "tap for more" reminder so it\'s always clear there\'s more to see.' },
       { v: 'v1.8', notes: 'Blessing selection now uses the current clock seconds to pick a rotating starting point on the list before randomizing, so picks don’t cluster near the start of the list.' },
@@ -366,7 +396,23 @@
     ];
     var DATA = window.BLESSINGS_DATA;
     var CATEGORIES = window.BLESSINGS_CATEGORIES;
-    var CONTENT_IDS = CATEGORIES.filter(function (c) { return c.id !== 'random'; }).map(function (c) { return c.id; });
+    // Favorites isn't a fixed curated list like the others — it's read live from
+    // localStorage — so it's excluded from both the saying-count total and the
+    // pool Random draws from.
+    var CONTENT_IDS = CATEGORIES.filter(function (c) { return c.id !== 'random' && c.id !== 'favorites'; }).map(function (c) { return c.id; });
+
+    var FAVORITES_KEY = 'dailyBlessingsFavorites';
+    function getFavorites() {
+      try {
+        return JSON.parse(window.localStorage.getItem(FAVORITES_KEY) || '[]');
+      } catch (err) { return []; }
+    }
+    function saveFavorites(list) {
+      try { window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(list)); } catch (err) { /* ignore */ }
+    }
+    function isFavorited(text) {
+      return !!text && getFavorites().indexOf(text) !== -1;
+    }
 
     var blessingEl = document.getElementById('blessing');
     var hintEl = document.getElementById('hint');
@@ -390,7 +436,11 @@
 
     function nextBlessing() {
       var catId = pickCategoryId();
-      var list = DATA[catId];
+      var list = catId === 'favorites' ? getFavorites() : DATA[catId];
+      if (!list || list.length === 0) {
+        lastIndex = -1;
+        return "You haven't saved any favorites yet. Tap the heart on a blessing you love to add it here.";
+      }
       // Use the current seconds as the starting point on the list, then land on
       // a random offset from there, so picks don't cluster near the top of the
       // array — the "start" rotates with the clock instead of always being 0.
@@ -414,6 +464,7 @@
         // visible (rather than hiding it) so it's clear there's always more.
         hintEl.textContent = 'tap for more';
         hintEl.classList.add('subtle');
+        updateHeartState();
       }, 180);
 
       var r = document.createElement('div');
@@ -561,8 +612,19 @@
 
     var copyBtn = document.getElementById('copyBtn');
     var messageBtn = document.getElementById('messageBtn');
+    var heartBtn = document.getElementById('heartBtn');
     var copyToast = document.getElementById('copyToast');
     var copyToastTimer = null;
+
+    function updateHeartState() {
+      if (isFavorited(currentText)) {
+        heartBtn.classList.add('active');
+        heartBtn.innerHTML = '&#9829;';
+      } else {
+        heartBtn.classList.remove('active');
+        heartBtn.innerHTML = '&#9825;';
+      }
+    }
 
     function fallbackCopy(text) {
       var ta = document.createElement('textarea');
@@ -616,6 +678,22 @@
           window.location.href = url;
         }, 500);
       });
+    });
+
+    bindTap(heartBtn, function (e) {
+      e.stopPropagation();
+      if (!currentText || currentCategory === 'favorites' && getFavorites().length === 0) return;
+      var favs = getFavorites();
+      var idx = favs.indexOf(currentText);
+      if (idx === -1) {
+        favs.push(currentText);
+        showToast('Added to Favorites');
+      } else {
+        favs.splice(idx, 1);
+        showToast('Removed from Favorites');
+      }
+      saveFavorites(favs);
+      updateHeartState();
     });
 
     // Checks the live deployment's version.json against the version baked into

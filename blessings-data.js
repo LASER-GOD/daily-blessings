@@ -456,6 +456,7 @@
     { id: "jewish", label: "Jewish", icon: "✡️" },
     { id: "catholic", label: "Catholic", icon: "✝️" },
     { id: "motivational", label: "Motivational", icon: "🔥" },
+    { id: "favorites", label: "Favorites", icon: "❤️" },
     { id: "random", label: "Random", icon: "🎲" }
   ];
 
