@@ -433,7 +433,24 @@
     "show you that discomfort is where growth happens.",
     "carry you to the other side of hard.",
     "remind you that your best is always enough.",
-    "keep pushing you toward the life you're building."
+    "keep pushing you toward the life you're building.",
+    "sharpen your focus when distraction calls.",
+    "turn quiet mornings into quiet victories.",
+    "remind you that discipline is just self-respect in action.",
+    "carry you steady through the messy middle of every goal.",
+    "prove that slow progress beats no progress.",
+    "keep your standards higher than your moods.",
+    "turn criticism into fuel instead of fear.",
+    "remind you that comfort and growth rarely live in the same room.",
+    "carry you one honest effort closer to mastery.",
+    "show you that the next step is always the right one.",
+    "keep your word to yourself, especially when no one's watching.",
+    "turn today's discomfort into tomorrow's confidence.",
+    "remind you that rest is strategy, not surrender.",
+    "carry you past the excuses that used to stop you.",
+    "prove that showing up beats waiting to feel ready.",
+    "keep your vision louder than your doubts.",
+    "turn ordinary effort into extraordinary results, one day at a time."
   ];
 
   var DATA = {
